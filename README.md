@@ -14,9 +14,9 @@ Future features will include links to watch the movie and more advanced browsing
 - ✨ Clean UI with reusable React components  
 - 🛠 Future roadmap:
   - Links to watch movies  
-  - Search functionality (by title/genre)  
+  - Search functionality (by title/genre)  -----done
   - User favorites & watchlist  
-  - Responsive design for mobile devices  
+  - Responsive design for mobile devices  --- done  
 
 ---
 
