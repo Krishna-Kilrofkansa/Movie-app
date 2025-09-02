@@ -1,12 +1,37 @@
-# React + Vite
+# 🎬 Movie-app
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React + Vite powered movie discovery app that fetches data from the **TMDB (The Movie Database) API**.  
+Currently, the app allows users to browse and view details about **trending movies**.  
+Future features will include links to watch the movie and more advanced browsing options.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Features
 
-## Expanding the ESLint configuration
+- 🔥 View **trending movies** in real-time using TMDB API  
+- 📖 Detailed information for each movie (title, description, release date, rating, poster, etc.)  
+- ⚡ Fast development setup using **React + Vite**  
+- ✨ Clean UI with reusable React components  
+- 🛠 Future roadmap:
+  - Links to watch movies  
+  - Search functionality (by title/genre)  
+  - User favorites & watchlist  
+  - Responsive design for mobile devices  
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## 🛠️ Tech Stack
+
+- [React](https://react.dev/) – UI library  
+- [Vite](https://vitejs.dev/) – Build tool for fast development  
+- [TMDB API](https://developer.themoviedb.org/) – Movie database source  
+- [ESLint](https://eslint.org/) – Code quality  
+
+---
+
+## ⚙️ Installation & Setup
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Krishna-Kilrofkansa/Movie-app.git
+   cd Movie-app
