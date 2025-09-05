@@ -96,8 +96,52 @@
     .all-movies {
         @apply space-y-9;
 
+        & .movies-header {
+            @apply flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4;
+        }
+
         & ul {
             @apply grid grid-cols-1 gap-5 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4;
+        }
+    }
+
+    .sort-controls {
+        @apply flex items-center gap-3;
+
+        & .sort-label {
+            @apply text-white font-medium text-sm;
+        }
+
+        & .sort-select {
+            @apply bg-dark-100 text-white px-3 py-2 rounded-lg border border-light-100/20 focus:border-light-100/40 focus:outline-none transition-colors;
+        }
+    }
+
+    .genre-filter {
+        @apply mt-6 mb-8;
+
+        & .genre-title {
+            @apply text-white font-semibold text-lg mb-4;
+        }
+
+        & .genre-grid {
+            @apply grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 mb-4;
+        }
+
+        & .genre-item {
+            @apply flex items-center gap-2 cursor-pointer hover:bg-light-100/5 p-2 rounded-lg transition-colors;
+
+            & .genre-checkbox {
+                @apply w-4 h-4 accent-purple-500;
+            }
+
+            & .genre-label {
+                @apply text-white text-sm font-medium;
+            }
+        }
+
+        & .clear-genres-btn {
+            @apply bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors;
         }
     }
 
@@ -138,6 +182,30 @@
 
         & .content .year {
             @apply text-gray-100 font-medium text-base;
+        }
+    }
+
+    .pagination {
+        @apply flex items-center justify-center gap-2 mt-8;
+
+        & .pagination-btn {
+            @apply px-4 py-2 bg-dark-100 text-white rounded-lg hover:bg-light-100/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+        }
+
+        & .page-numbers {
+            @apply flex items-center gap-1;
+        }
+
+        & .page-btn {
+            @apply w-10 h-10 flex items-center justify-center text-white rounded-lg hover:bg-light-100/10 transition-colors disabled:cursor-not-allowed;
+
+            &.active {
+                @apply bg-gradient-to-r from-[#D6C7FF] to-[#AB8BFF] text-primary font-bold;
+            }
+
+            &.dots {
+                @apply cursor-default hover:bg-transparent;
+            }
         }
     }
 }
