@@ -1,14 +1,17 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useState, useRef, useCallback, useMemo} from 'react'
+import { gsap } from 'gsap'
 import Search from "./components/Search.jsx";
 import heroo from "./assets/hero.png"
 import Spinner from "./components/Spinner.jsx";
 import Moviecard from "./components/Moviecard.jsx";
+import TopMovies from "./components/TopMovies.jsx";
 import Pagination from "./components/Pagination.jsx";
 import SortControls from "./components/SortControls.jsx";
 import GenreFilter from "./components/GenreFilter.jsx";
 import {useDebounce} from "react-use";
 
 const API_BASE_URL = "https://api.themoviedb.org/3"
+const ALLOWED_ENDPOINTS = ['/search/movie', '/discover/movie', '/genre/movie/list', '/trending/movie/week'];
 
 // Support both TMDB v4 Bearer token and v3 API key via env
 const V4_TOKEN = import.meta.env.VITE_TMDB_V4_TOKEN || import.meta.env.VITE_TMDB_API_KEY;
@@ -39,12 +42,37 @@ const App = () => {
     const [sortOrder, setSortOrder] = useState('desc');
     const [genres, setGenres] = useState([]);
     const [selectedGenres, setSelectedGenres] = useState([]);
+    const [expandedMovie, setExpandedMovie] = useState(null);
+    const [topMovies, setTopMovies] = useState([]);
+    const movieListRef = useRef(null);
+
+
+
+    // Memoized URL builder to prevent object creation on every call
+    const buildSafeUrl = useMemo(() => (endpoint, params = {}) => {
+        if (!ALLOWED_ENDPOINTS.includes(endpoint)) {
+            throw new Error('Unauthorized API endpoint');
+        }
+        
+        try {
+            const url = new URL(`${API_BASE_URL}${endpoint}`);
+            
+            Object.entries(params).forEach(([key, value]) => {
+                if (value !== undefined && value !== null) url.searchParams.set(key, value);
+            });
+            
+            return url.toString();
+        } catch (error) {
+            throw new Error(`Invalid URL construction: ${error.message}`);
+        }
+    }, []);
 
     useDebounce(() => setDebounceSearchterm(searchTerm), 1000,[searchTerm]);
 
     const fetchGenres = async() => {
         try {
-            const response = await fetch(`${API_BASE_URL}/genre/movie/list`, API_OPTIONS);
+            const genreEndpoint = buildSafeUrl('/genre/movie/list');
+            const response = await fetch(genreEndpoint, API_OPTIONS);
             if (response.ok) {
                 const data = await response.json();
                 setGenres(data.genres || []);
@@ -54,20 +82,37 @@ const App = () => {
         }
     };
 
+    const fetchTopMovies = async() => {
+        try {
+            const topMoviesEndpoint = buildSafeUrl('/trending/movie/week');
+            const response = await fetch(topMoviesEndpoint, API_OPTIONS);
+            if (response.ok) {
+                const data = await response.json();
+                setTopMovies(data.results?.slice(0, 4) || []);
+            }
+        } catch (error) {
+            console.error('Error fetching top movies:', error);
+        }
+    };
+
     const fetchMovies = async(query='', page=1) => {
         setIsloading(true);
         setErrormessage('');
         try{
-            let searchOrDiscover;
+            // Authentication parameters
+            const params = { page };
+            if (!V4_TOKEN && V3_API_KEY) params.api_key = V3_API_KEY;
+            
+            // Query parameters
             if (query) {
-                searchOrDiscover = `/search/movie?query=${encodeURIComponent(query)}&page=${page}`;
+                params.query = query;
             } else {
-                // Add genre filter if genres are selected
-                const genreFilter = selectedGenres.length > 0 ? `&with_genres=${selectedGenres.join(',')}` : '';
-                searchOrDiscover = `/discover/movie?sort_by=${sortBy}&page=${page}${genreFilter}`;
+                // Filtering parameters
+                if (sortBy) params.sort_by = sortBy;
+                if (selectedGenres.length > 0) params.with_genres = selectedGenres.join(',');
             }
-            const authQuery = !V4_TOKEN && V3_API_KEY ? `&api_key=${V3_API_KEY}` : '';
-            const endpoint = `${API_BASE_URL}${searchOrDiscover}${authQuery}`;
+            
+            const endpoint = buildSafeUrl(query ? '/search/movie' : '/discover/movie', params);
             const response = await fetch(endpoint, API_OPTIONS);
 
             if(!response.ok) {
@@ -99,6 +144,7 @@ const App = () => {
 
     useEffect(() => {
         fetchGenres(); // Fetch genres on component mount
+        fetchTopMovies(); // Fetch top movies on component mount
     }, []);
 
     useEffect(() => {
@@ -128,17 +174,74 @@ const App = () => {
         }
         setCurrentPage(1); // Reset to page 1 when genre changes
     }
+    
+    const handleMovieExpand = useCallback((movieId) => {
+        setExpandedMovie(movieId)
+        
+        // Animate other cards to move aside
+        const listItems = movieListRef.current?.querySelectorAll('li')
+        listItems?.forEach((item) => {
+            const itemMovieId = parseInt(item.dataset.movieId, 10)
+            if (itemMovieId !== movieId) {
+                gsap.to(item, {
+                    scale: 0.9,
+                    opacity: 0.6,
+                    duration: 0.3,
+                    ease: "power2.out"
+                })
+            }
+        })
+    }, [])
+    
+    const handleMovieClose = useCallback(() => {
+        setExpandedMovie(null)
+        
+        // Animate cards back to normal
+        const listItems = movieListRef.current?.querySelectorAll('li')
+        listItems?.forEach((item) => {
+            gsap.to(item, {
+                scale: 1,
+                opacity: 1,
+                duration: 0.3,
+                ease: "power2.out"
+            })
+        })
+    }, [])
+    
+    // Handle outside click to close expanded movie
+    useEffect(() => {
+        const handleOutsideClick = (e) => {
+            if (expandedMovie && !e.target.closest('.movie-card.expanded')) {
+                handleMovieClose()
+            }
+        }
+        
+        if (expandedMovie) {
+            document.addEventListener('click', handleOutsideClick)
+        }
+        
+        return () => {
+            document.removeEventListener('click', handleOutsideClick)
+        }
+    }, [expandedMovie, handleMovieClose])
     return (
         <main>
             <div className="pattern"></div>
             <div className="wrapper">
                 <header>
-                    <img src={heroo} alt="Hero Banner"/>
                     <h1>
                         Find The <span className="text-gradient">Movies</span> that you'll enjoy without hassle!!
                     </h1>
                 <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
                 </header>
+                
+                <TopMovies 
+                    topMovies={topMovies}
+                    expandedMovie={expandedMovie}
+                    onExpand={handleMovieExpand}
+                    onClose={handleMovieClose}
+                />
+                
                 <section className="all-movies">
                     <div className="movies-header">
                         <h2 className="mt-[40px]">All Movies</h2>
@@ -158,9 +261,16 @@ const App = () => {
                         <p className="text-red-500">{errormessage}</p>
                     ):(
                         <>
-                            <ul>
+                            <ul ref={movieListRef} className="movie-grid" role="grid" aria-label="Movie collection">
                                 {movielist.map((movie) => (
-                                    <Moviecard key={movie.id} movie={movie}/>
+                                    <li key={movie.id} data-movie-id={movie.id}>
+                                        <Moviecard 
+                                            movie={movie}
+                                            isExpanded={expandedMovie === movie.id}
+                                            onExpand={handleMovieExpand}
+                                            onClose={handleMovieClose}
+                                        />
+                                    </li>
                                 ))}
                             </ul>
                             <Pagination 

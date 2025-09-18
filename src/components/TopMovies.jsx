@@ -2,34 +2,36 @@ import React, { useRef, useEffect, useState, useCallback } from 'react'
 import { gsap } from 'gsap'
 import starr from "../assets/star.svg"
 
-const Moviecard = ({ movie, isExpanded, onExpand, onClose }) => {
+const TopMovieCard = ({ movie, rank, isExpanded, onExpand, onClose }) => {
     const { id, title, vote_average, poster_path, release_date, original_language, overview } = movie
     const cardRef = useRef(null)
     const detailsRef = useRef(null)
     const [trailers, setTrailers] = useState([])
     const [trailersLoaded, setTrailersLoaded] = useState(false)
     const [playingTrailer, setPlayingTrailer] = useState(null)
+    const scrollTimeoutRef = useRef(null)
+    const bodyOverflowTimeoutRef = useRef(null)
     
     useEffect(() => {
         if (isExpanded) {
-            // Scroll to show the expanded card
-            setTimeout(() => {
+            scrollTimeoutRef.current = setTimeout(() => {
                 cardRef.current?.scrollIntoView({
                     behavior: 'smooth',
                     block: 'center'
                 })
             }, 100)
             
-            // Lock scroll after scrolling to position
-            setTimeout(() => {
+            bodyOverflowTimeoutRef.current = setTimeout(() => {
                 document.body.style.overflow = 'hidden'
-            }, 600)
+            }, 400)
             
-            gsap.to(cardRef.current, {
-                zIndex: 10,
-                duration: 0.4,
-                ease: "power2.out"
-            })
+            if (cardRef.current) {
+                gsap.to(cardRef.current, {
+                    zIndex: 10,
+                    duration: 0.4,
+                    ease: "power2.out"
+                })
+            }
             if (detailsRef.current) {
                 gsap.to(detailsRef.current, {
                     width: "auto",
@@ -40,32 +42,40 @@ const Moviecard = ({ movie, isExpanded, onExpand, onClose }) => {
             }
             fetchTrailers()
         } else {
-            // Unlock scroll
             document.body.style.overflow = 'auto'
             
-            gsap.to(cardRef.current, {
-                zIndex: 1,
-                duration: 0.3,
-                ease: "power2.out"
-            })
+            if (cardRef.current) {
+                gsap.to(cardRef.current, {
+                    zIndex: 1,
+                    duration: 0.4,
+                    ease: "power2.out"
+                })
+            }
             if (detailsRef.current) {
                 gsap.to(detailsRef.current, {
                     width: 0,
                     opacity: 0,
-                    duration: 0.3,
+                    duration: 0.4,
                     ease: "power2.out"
                 })
             }
         }
         
-        // Cleanup on unmount
         return () => {
-            document.body.style.overflow = 'auto'
+            if (scrollTimeoutRef.current) {
+                clearTimeout(scrollTimeoutRef.current)
+            }
+            if (bodyOverflowTimeoutRef.current) {
+                clearTimeout(bodyOverflowTimeoutRef.current)
+            }
+            if (isExpanded) {
+                document.body.style.overflow = 'auto'
+            }
         }
     }, [isExpanded])
     
     const fetchTrailers = useCallback(async () => {
-        if (trailersLoaded) return // Prevent refetching
+        if (trailersLoaded) return
         
         try {
             const V4_TOKEN = import.meta.env.VITE_TMDB_V4_TOKEN || import.meta.env.VITE_TMDB_API_KEY
@@ -108,17 +118,18 @@ const Moviecard = ({ movie, isExpanded, onExpand, onClose }) => {
     return (
         <div 
             ref={cardRef}
-            className={`movie-card ${isExpanded ? 'expanded' : ''}`}
+            className={`top-movie-card ${isExpanded ? 'expanded' : ''}`}
             onClick={(e) => {
                 e.stopPropagation()
                 if (!isExpanded) onExpand(id)
             }}
             data-movie-id={id}
         >
+            <div className="rank-number">{rank}</div>
             <div className="card-main-content">
                 <img src={poster_path ? `https://image.tmdb.org/t/p/w500/${poster_path}` : '/no-movie.png'} alt={title}/>
                 
-                <div className="mt-4">
+                <div className="movie-info">
                     <h3>{title}</h3>
                     <div className="content">
                         <div className="rating">
@@ -192,4 +203,29 @@ const Moviecard = ({ movie, isExpanded, onExpand, onClose }) => {
     )
 }
 
-export default Moviecard
+const TopMovies = ({ topMovies, expandedMovie, onExpand, onClose }) => {
+    if (!topMovies || topMovies.length === 0) return null
+
+    return (
+        <section className="top-movies">
+            <div className="top-movies-header">
+                <h2>Top Movies This Week</h2>
+                <p className="update-info">Updated weekly</p>
+            </div>
+            <div className="top-movies-grid">
+                {topMovies.slice(0, 4).map((movie, index) => (
+                    <TopMovieCard
+                        key={movie.id}
+                        movie={movie}
+                        rank={index + 1}
+                        isExpanded={expandedMovie === movie.id}
+                        onExpand={onExpand}
+                        onClose={onClose}
+                    />
+                ))}
+            </div>
+        </section>
+    )
+}
+
+export default TopMovies

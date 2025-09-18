@@ -1,7 +1,8 @@
 import React from 'react'
 
-const GenreFilter = ({ genres, selectedGenres, onGenreChange }) => {
-    if (genres.length === 0) return null;
+const GenreFilter = ({ genres, selectedGenres = [], onGenreChange }) => {
+    if (!genres || !Array.isArray(genres) || genres.length === 0) return null;
+    if (!Array.isArray(selectedGenres)) return null;
 
     return (
         <div className="genre-filter">

@@ -42,7 +42,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
             <div className="page-numbers">
                 {getVisiblePages().map((page, index) => (
                     <button
-                        key={index}
+                        key={page === '...' ? `dots-${index}` : page}
                         onClick={() => typeof page === 'number' && onPageChange(page)}
                         disabled={page === '...'}
                         className={`page-btn ${currentPage === page ? 'active' : ''} ${page === '...' ? 'dots' : ''}`}

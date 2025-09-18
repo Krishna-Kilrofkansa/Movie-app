@@ -1,12 +1,13 @@
 import React from 'react'
 
+const sortOptions = [
+    { value: 'popularity.desc', label: 'Most Popular' },
+    { value: 'popularity.asc', label: 'Least Popular' },
+    { value: 'vote_average.desc', label: 'Highest Rated' },
+    { value: 'vote_average.asc', label: 'Lowest Rated' }
+];
+
 const SortControls = ({ sortBy, onSortChange }) => {
-    const sortOptions = [
-        { value: 'popularity.desc', label: 'Most Popular' },
-        { value: 'popularity.asc', label: 'Least Popular' },
-        { value: 'vote_average.desc', label: 'Highest Rated' },
-        { value: 'vote_average.asc', label: 'Lowest Rated' }
-    ];
 
     return (
         <div className="sort-controls">
