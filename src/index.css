@@ -567,3 +567,380 @@
     font-size: 1rem;
     text-transform: capitalize;
 }
+
+/* Personality Recommender Styles */
+.personality-recommender {
+    @apply max-w-6xl mx-auto p-6 mb-16;
+}
+
+.personality-header {
+    @apply text-center mb-8;
+}
+
+.personality-title {
+    @apply text-4xl font-bold text-white mb-3 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent;
+}
+
+.personality-subtitle {
+    @apply text-gray-300 text-lg max-w-2xl mx-auto;
+}
+
+.personality-form {
+    @apply bg-dark-100 rounded-2xl p-8 shadow-2xl border border-light-100/10 mb-8;
+}
+
+.form-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-6 mb-8;
+}
+
+.form-group {
+    @apply space-y-2;
+}
+
+.form-label {
+    @apply block text-white font-semibold text-sm mb-2;
+}
+
+.form-input,
+.form-select {
+    @apply w-full bg-primary border border-light-100/20 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 transition-all duration-300;
+}
+
+.form-input:focus,
+.form-select:focus {
+    @apply shadow-lg shadow-purple-500/10;
+}
+
+.recommend-btn {
+    @apply w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl hover:shadow-purple-500/25 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-3 text-lg;
+}
+
+.spinner {
+    @apply w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin;
+}
+
+.error-message {
+    @apply bg-red-900/20 border border-red-500/30 text-red-300 px-6 py-4 rounded-lg flex items-center gap-3 mb-6;
+}
+
+.error-icon {
+    @apply text-xl;
+}
+
+.recommendations-section {
+    @apply mt-12;
+}
+
+.recommendations-title {
+    @apply text-3xl font-bold text-white mb-8 text-center bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent;
+}
+
+.recommendations-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+}
+
+.recommendation-card {
+    @apply bg-dark-100 rounded-2xl overflow-hidden shadow-xl border border-light-100/10 hover:border-purple-500/30 transition-all duration-300 hover:transform hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/10;
+    animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.card-poster {
+    @apply relative overflow-hidden;
+}
+
+.card-poster img {
+    @apply w-full h-64 object-cover transition-transform duration-300 hover:scale-110;
+}
+
+.card-content {
+    @apply p-6;
+}
+
+.card-title {
+    @apply text-xl font-bold text-white mb-3 line-clamp-2;
+}
+
+.card-meta {
+    @apply flex items-center gap-3 mb-4 text-sm;
+}
+
+.card-meta .year {
+    @apply bg-purple-600/20 text-purple-300 px-2 py-1 rounded-full font-medium;
+}
+
+.card-meta .director {
+    @apply text-gray-400;
+}
+
+.card-reason {
+    @apply mb-4;
+}
+
+.reason-label {
+    @apply block text-green-400 font-semibold text-sm mb-2;
+}
+
+.card-reason {
+    @apply text-gray-300 leading-relaxed;
+}
+
+.card-plot {
+    @apply text-gray-400 text-sm leading-relaxed mt-4 pt-4 border-t border-light-100/10;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.recommendation-card:nth-child(1) { animation-delay: 0.1s; }
+.recommendation-card:nth-child(2) { animation-delay: 0.2s; }
+.recommendation-card:nth-child(3) { animation-delay: 0.3s; }
+.recommendation-card:nth-child(4) { animation-delay: 0.4s; }
+.recommendation-card:nth-child(5) { animation-delay: 0.5s; }
+/* Top Navigation Bar */
+.top-nav {
+    @apply fixed top-0 left-0 right-0 z-50 bg-primary/95 backdrop-blur-sm border-b border-light-100/10;
+}
+
+.nav-container {
+    @apply max-w-7xl mx-auto px-5 py-4 flex items-center justify-between;
+}
+
+.nav-logo {
+    @apply text-2xl font-bold;
+}
+
+.ai-nav-btn {
+    @apply bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold px-6 py-2 rounded-lg transition-all duration-300 transform hover:scale-105;
+}
+
+/* Button Group Styles */
+.button-group {
+    @apply flex gap-4 flex-col sm:flex-row;
+}
+
+.random-btn {
+    @apply bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-bold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl hover:shadow-green-500/25 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-3 text-lg;
+}
+
+/* Random Personality Display */
+.random-personality {
+    @apply mb-6 p-4 bg-gradient-to-r from-purple-900/20 to-pink-900/20 rounded-xl border border-purple-500/30;
+}
+
+.random-personality-title {
+    @apply text-lg font-semibold text-purple-300 mb-3;
+}
+
+.personality-tags {
+    @apply flex flex-wrap gap-2;
+}
+
+.personality-tag {
+    @apply px-3 py-1 rounded-full text-sm font-medium;
+}
+
+.personality-tag.mood {
+    @apply bg-blue-600/20 text-blue-300 border border-blue-500/30;
+}
+
+.personality-tag.hobby {
+    @apply bg-green-600/20 text-green-300 border border-green-500/30;
+}
+
+.personality-tag.genre {
+    @apply bg-purple-600/20 text-purple-300 border border-purple-500/30;
+}
+
+.personality-tag.vibe {
+    @apply bg-pink-600/20 text-pink-300 border border-pink-500/30;
+}
+
+/* Adjust main content for fixed nav */
+main {
+    @apply pt-20;
+}
+/* Modern Design System */
+:root {
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+
+/* Top Navigation Bar */
+.top-nav {
+    @apply fixed top-0 left-0 right-0 z-50;
+    background: rgba(3, 0, 20, 0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(206, 206, 251, 0.1);
+    box-shadow: var(--shadow-lg);
+}
+
+.nav-container {
+    @apply max-w-7xl mx-auto px-6 py-4 flex items-center justify-between;
+}
+
+.nav-logo {
+    @apply text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent;
+}
+
+.ai-nav-btn {
+    @apply inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-white transition-all duration-300;
+    background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+    transform: translateY(0);
+}
+
+.ai-nav-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+    background: linear-gradient(135deg, #7c3aed 0%, #db2777 100%);
+}
+
+.ai-nav-btn:active {
+    transform: translateY(0);
+}
+
+/* Button Group Styles */
+.button-group {
+    @apply flex gap-4 flex-col sm:flex-row mt-8;
+}
+
+.recommend-btn {
+    @apply inline-flex items-center justify-center gap-3 px-8 py-4 rounded-xl font-bold text-white text-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed;
+    background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+    transform: translateY(0);
+    min-height: 56px;
+}
+
+.recommend-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+    background: linear-gradient(135deg, #7c3aed 0%, #db2777 100%);
+}
+
+.recommend-btn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.random-btn {
+    @apply inline-flex items-center justify-center gap-3 px-8 py-4 rounded-xl font-bold text-white text-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed;
+    background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+    transform: translateY(0);
+    min-height: 56px;
+}
+
+.random-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+    background: linear-gradient(135deg, #059669 0%, #2563eb 100%);
+}
+
+.random-btn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+/* Enhanced Spinner */
+.spinner {
+    @apply w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin;
+}
+
+/* Random Personality Display */
+.random-personality {
+    @apply mb-8 p-6 rounded-2xl border;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(236, 72, 153, 0.1) 100%);
+    border-color: rgba(139, 92, 246, 0.3);
+    box-shadow: var(--shadow-lg);
+}
+
+.random-personality-title {
+    @apply text-xl font-bold text-purple-300 mb-4 flex items-center gap-2;
+}
+
+.personality-tags {
+    @apply flex flex-wrap gap-3;
+}
+
+.personality-tag {
+    @apply px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 hover:scale-105;
+    box-shadow: var(--shadow-sm);
+}
+
+.personality-tag.mood {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(147, 197, 253, 0.2) 100%);
+    @apply text-blue-300 border border-blue-500/30;
+}
+
+.personality-tag.hobby {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(110, 231, 183, 0.2) 100%);
+    @apply text-green-300 border border-green-500/30;
+}
+
+.personality-tag.genre {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(196, 181, 253, 0.2) 100%);
+    @apply text-purple-300 border border-purple-500/30;
+}
+
+.personality-tag.vibe {
+    background: linear-gradient(135deg, rgba(236, 72, 153, 0.2) 0%, rgba(251, 207, 232, 0.2) 100%);
+    @apply text-pink-300 border border-pink-500/30;
+}
+
+/* Enhanced Form Styling */
+.personality-form {
+    background: linear-gradient(135deg, rgba(15, 13, 35, 0.8) 0%, rgba(15, 13, 35, 0.9) 100%);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(206, 206, 251, 0.1);
+    box-shadow: var(--shadow-xl);
+}
+
+.form-select {
+    @apply transition-all duration-300;
+    box-shadow: var(--shadow-sm);
+}
+
+.form-select:focus {
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1), var(--shadow-md);
+}
+
+/* Enhanced Recommendation Cards */
+.recommendation-card {
+    backdrop-filter: blur(20px);
+    box-shadow: var(--shadow-xl);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.recommendation-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 25px 50px -12px rgba(139, 92, 246, 0.25);
+}
+
+/* Adjust main content for fixed nav */
+main {
+    @apply pt-24;
+}
+
+/* Enhanced Typography */
+.personality-title {
+    background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 50%, #f59e0b 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.recommendations-title {
+    background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}

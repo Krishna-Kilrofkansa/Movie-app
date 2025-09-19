@@ -1,5 +1,6 @@
 import React, {useEffect, useState, useRef, useCallback, useMemo} from 'react'
 import { gsap } from 'gsap'
+import { CpuChipIcon } from '@heroicons/react/24/outline'
 import Search from "./components/Search.jsx";
 import heroo from "./assets/hero.png"
 import Spinner from "./components/Spinner.jsx";
@@ -8,6 +9,7 @@ import TopMovies from "./components/TopMovies.jsx";
 import Pagination from "./components/Pagination.jsx";
 import SortControls from "./components/SortControls.jsx";
 import GenreFilter from "./components/GenreFilter.jsx";
+import PersonalityRecommender from "./components/PersonalityRecommender.jsx";
 import {useDebounce} from "react-use";
 
 const API_BASE_URL = "https://api.themoviedb.org/3"
@@ -44,6 +46,7 @@ const App = () => {
     const [selectedGenres, setSelectedGenres] = useState([]);
     const [expandedMovie, setExpandedMovie] = useState(null);
     const [topMovies, setTopMovies] = useState([]);
+    const [showAIRecommender, setShowAIRecommender] = useState(false);
     const movieListRef = useRef(null);
 
 
@@ -227,64 +230,84 @@ const App = () => {
     return (
         <main>
             <div className="pattern"></div>
-            <div className="wrapper">
-                <header>
-                    <h1>
-                        Find The <span className="text-gradient">Movies</span> that you'll enjoy without hassle!!
-                    </h1>
-                <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-                </header>
-                
-                <TopMovies 
-                    topMovies={topMovies}
-                    expandedMovie={expandedMovie}
-                    onExpand={handleMovieExpand}
-                    onClose={handleMovieClose}
-                />
-                
-                <section className="all-movies">
-                    <div className="movies-header">
-                        <h2 className="mt-[40px]">All Movies</h2>
-                        <SortControls 
-                            sortBy={sortBy}
-                            onSortChange={handleSortChange}
-                        />
+            
+            {/* Top Navigation Bar */}
+            <nav className="top-nav">
+                <div className="nav-container">
+                    <div className="nav-logo">
+                        <span className="text-gradient">MovieFinder</span>
                     </div>
-                    <GenreFilter 
-                        genres={genres}
-                        selectedGenres={selectedGenres}
-                        onGenreChange={handleGenreChange}
-                    />
-                    {isloading ? (
-                        <Spinner/>
-                    ):errormessage ? (
-                        <p className="text-red-500">{errormessage}</p>
-                    ):(
-                        <>
-                            <ul ref={movieListRef} className="movie-grid" role="grid" aria-label="Movie collection">
-                                {movielist.map((movie) => (
-                                    <li key={movie.id} data-movie-id={movie.id}>
-                                        <Moviecard 
-                                            movie={movie}
-                                            isExpanded={expandedMovie === movie.id}
-                                            onExpand={handleMovieExpand}
-                                            onClose={handleMovieClose}
-                                        />
-                                    </li>
-                                ))}
-                            </ul>
-                            <Pagination 
-                                currentPage={currentPage}
-                                totalPages={totalPages}
-                                onPageChange={handlePageChange}
+                    <button 
+                        className="ai-nav-btn"
+                        onClick={() => setShowAIRecommender(!showAIRecommender)}
+                    >
+                        <CpuChipIcon className="w-5 h-5" />
+                        AI Recommender
+                    </button>
+                </div>
+            </nav>
+            
+            <div className="wrapper">
+                {showAIRecommender ? (
+                    <PersonalityRecommender />
+                ) : (
+                    <>
+                        <header>
+                            <h1>
+                                Find The <span className="text-gradient">Movies</span> that you'll enjoy without hassle!!
+                            </h1>
+                            <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+                        </header>
+                        
+                        <TopMovies 
+                            topMovies={topMovies}
+                            expandedMovie={expandedMovie}
+                            onExpand={handleMovieExpand}
+                            onClose={handleMovieClose}
+                        />
+                        
+                        <section className="all-movies">
+                            <div className="movies-header">
+                                <h2 className="mt-[40px]">All Movies</h2>
+                                <SortControls 
+                                    sortBy={sortBy}
+                                    onSortChange={handleSortChange}
+                                />
+                            </div>
+                            <GenreFilter 
+                                genres={genres}
+                                selectedGenres={selectedGenres}
+                                onGenreChange={handleGenreChange}
                             />
-                        </>
-                    )}
-                </section>
-
-
+                            {isloading ? (
+                                <Spinner/>
+                            ):errormessage ? (
+                                <p className="text-red-500">{errormessage}</p>
+                            ):(
+                                <>
+                                    <ul ref={movieListRef} className="movie-grid" role="grid" aria-label="Movie collection">
+                                        {movielist.map((movie) => (
+                                            <li key={movie.id} data-movie-id={movie.id}>
+                                                <Moviecard 
+                                                    movie={movie}
+                                                    isExpanded={expandedMovie === movie.id}
+                                                    onExpand={handleMovieExpand}
+                                                    onClose={handleMovieClose}
+                                                />
+                                            </li>
+                                        ))}
+                                    </ul>
+                                    <Pagination 
+                                        currentPage={currentPage}
+                                        totalPages={totalPages}
+                                        onPageChange={handlePageChange}
+                                    />
+                                </>
+                            )}
+                        </section>
+                    </>
+                )}
             </div>
-
         </main>
     )
 }
