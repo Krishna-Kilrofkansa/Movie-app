@@ -7,8 +7,11 @@ import os
 app = Flask(__name__)
 
 def query_gemini_model(prompt):
-    api_key = os.environ.get('GEMINI_API_KEY')
+    api_key = os.environ.get('GEMINI_API_KEY') or os.getenv('GEMINI_API_KEY')
+    print(f"Gemini API Key present: {bool(api_key)}, Length: {len(api_key) if api_key else 0}")
+    
     if not api_key or len(api_key) < 20:
+        print("Gemini API key not found or invalid")
         return ""
     
     try:
@@ -41,8 +44,11 @@ Respond with ONLY this JSON structure (no other text):
     return ""
 
 def query_huggingface_model(prompt):
-    api_key = os.environ.get('HUGGINGFACE_API_KEY')
+    api_key = os.environ.get('HUGGINGFACE_API_KEY') or os.getenv('HUGGINGFACE_API_KEY')
+    print(f"HF API Key present: {bool(api_key)}, Length: {len(api_key) if api_key else 0}")
+    
     if not api_key or len(api_key) < 20:
+        print("HuggingFace API key not found or invalid")
         return ""
     
     headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
@@ -70,8 +76,11 @@ def query_ai_model(prompt):
     return result if result else query_huggingface_model(prompt)
 
 def fetch_tmdb_info(title):
-    api_key = os.environ.get('TMDB_API_KEY')
+    api_key = os.environ.get('TMDB_API_KEY') or os.getenv('TMDB_API_KEY')
+    print(f"TMDB API Key present: {bool(api_key)}, Length: {len(api_key) if api_key else 0}")
+    
     if not api_key:
+        print("TMDB API key not found")
         return None
     
     try:
@@ -114,6 +123,8 @@ def fetch_tmdb_info(title):
     return None
 
 def handler(request):
+    print(f"Environment variables: GEMINI={bool(os.environ.get('GEMINI_API_KEY'))}, HF={bool(os.environ.get('HUGGINGFACE_API_KEY'))}, TMDB={bool(os.environ.get('TMDB_API_KEY'))}")
+    
     if request.method != 'POST':
         return jsonify({"error": "Method not allowed"}), 405
         
