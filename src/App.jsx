@@ -88,10 +88,14 @@ const App = () => {
     const fetchTopMovies = async() => {
         try {
             const topMoviesEndpoint = buildSafeUrl('/trending/movie/week');
+            console.log('Fetching top movies from:', topMoviesEndpoint);
             const response = await fetch(topMoviesEndpoint, API_OPTIONS);
             if (response.ok) {
                 const data = await response.json();
+                console.log('Top movies data:', data.results?.slice(0, 4));
                 setTopMovies(data.results?.slice(0, 4) || []);
+            } else {
+                console.error('Top movies API response not ok:', response.status, response.statusText);
             }
         } catch (error) {
             console.error('Error fetching top movies:', error);
@@ -257,14 +261,12 @@ const App = () => {
                                 Find The <span className="text-gradient">Movies</span> that you'll enjoy without hassle!!
                             </h1>
                             
-                            {!debounceSearchterm && (
-                                <TopMovies 
-                                    topMovies={topMovies}
-                                    expandedMovie={expandedMovie}
-                                    onExpand={handleMovieExpand}
-                                    onClose={handleMovieClose}
-                                />
-                            )}
+                            <TopMovies 
+                                topMovies={topMovies}
+                                expandedMovie={expandedMovie}
+                                onExpand={handleMovieExpand}
+                                onClose={handleMovieClose}
+                            />
                             
                             <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
                         </header>

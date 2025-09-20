@@ -3,6 +3,10 @@ import requests
 import json
 import re
 import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 app = Flask(__name__)
 
@@ -184,6 +188,6 @@ Suggest 3 matching movies."""
     
     return jsonify({"recommendations": recommendations})
 
-# For Vercel
+# For local testing and Vercel
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5000)

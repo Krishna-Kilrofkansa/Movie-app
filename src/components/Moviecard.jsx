@@ -9,6 +9,9 @@ const Moviecard = ({ movie, isExpanded, onExpand, onClose }) => {
     const [trailers, setTrailers] = useState([])
     const [trailersLoaded, setTrailersLoaded] = useState(false)
     const [playingTrailer, setPlayingTrailer] = useState(null)
+    const [cast, setCast] = useState([])
+    const [watchProviders, setWatchProviders] = useState(null)
+    const [dataLoaded, setDataLoaded] = useState(false)
     
     useEffect(() => {
         if (isExpanded) {
@@ -38,7 +41,7 @@ const Moviecard = ({ movie, isExpanded, onExpand, onClose }) => {
                     ease: "power2.out"
                 })
             }
-            fetchTrailers()
+            fetchMovieData()
         } else {
             // Unlock scroll
             document.body.style.overflow = 'auto'
@@ -64,19 +67,18 @@ const Moviecard = ({ movie, isExpanded, onExpand, onClose }) => {
         }
     }, [isExpanded])
     
-    const fetchTrailers = useCallback(async () => {
-        if (trailersLoaded) return // Prevent refetching
+    const fetchMovieData = useCallback(async () => {
+        if (dataLoaded) return
         
         try {
             const V4_TOKEN = import.meta.env.VITE_TMDB_V4_TOKEN || import.meta.env.VITE_TMDB_API_KEY
             const V3_API_KEY = import.meta.env.VITE_TMDB_API_KEY_V3
             
             if (!V4_TOKEN && !V3_API_KEY) {
-                console.warn('No API key found for trailer fetching')
+                console.warn('No API key found')
                 return
             }
             
-            const url = `https://api.themoviedb.org/3/movie/${id}/videos${!V4_TOKEN && V3_API_KEY ? `?api_key=${V3_API_KEY}` : ''}`
             const options = {
                 method: 'GET',
                 headers: {
@@ -85,25 +87,37 @@ const Moviecard = ({ movie, isExpanded, onExpand, onClose }) => {
                 }
             }
             
-            const response = await fetch(url, options)
+            // Fetch trailers, cast, and watch providers
+            const [videosRes, creditsRes, watchRes] = await Promise.all([
+                fetch(`https://api.themoviedb.org/3/movie/${id}/videos${!V4_TOKEN && V3_API_KEY ? `?api_key=${V3_API_KEY}` : ''}`, options),
+                fetch(`https://api.themoviedb.org/3/movie/${id}/credits${!V4_TOKEN && V3_API_KEY ? `?api_key=${V3_API_KEY}` : ''}`, options),
+                fetch(`https://api.themoviedb.org/3/movie/${id}/watch/providers${!V4_TOKEN && V3_API_KEY ? `?api_key=${V3_API_KEY}` : ''}`, options)
+            ])
             
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`)
+            if (videosRes.ok) {
+                const videosData = await videosRes.json()
+                const youtubeTrailers = videosData.results?.filter(video => 
+                    video.type === 'Trailer' && video.site === 'YouTube'
+                ).slice(0, 2) || []
+                setTrailers(youtubeTrailers)
             }
             
-            const data = await response.json()
-            const youtubeTrailers = data.results?.filter(video => 
-                video.type === 'Trailer' && video.site === 'YouTube'
-            ).slice(0, 2) || []
+            if (creditsRes.ok) {
+                const creditsData = await creditsRes.json()
+                setCast(creditsData.cast?.slice(0, 6) || [])
+            }
             
-            setTrailers(youtubeTrailers)
-            setTrailersLoaded(true)
+            if (watchRes.ok) {
+                const watchData = await watchRes.json()
+                setWatchProviders(watchData.results?.US || null)
+            }
+            
+            setDataLoaded(true)
         } catch (error) {
-            console.error('Error fetching trailers:', error)
-            setTrailers([])
-            setTrailersLoaded(true)
+            console.error('Error fetching movie data:', error)
+            setDataLoaded(true)
         }
-    }, [id, trailersLoaded])
+    }, [id, dataLoaded])
     
     return (
         <div 
@@ -153,6 +167,64 @@ const Moviecard = ({ movie, isExpanded, onExpand, onClose }) => {
                             <h4>Overview</h4>
                             <p>{overview || 'No overview available.'}</p>
                         </div>
+                        
+                        {cast.length > 0 && (
+                            <div className="cast">
+                                <h4>Cast</h4>
+                                <div className="cast-grid">
+                                    {cast.map((actor) => (
+                                        <div key={actor.id} className="cast-member">
+                                            <img 
+                                                src={actor.profile_path ? `https://image.tmdb.org/t/p/w185${actor.profile_path}` : '/no-movie.png'} 
+                                                alt={actor.name}
+                                            />
+                                            <div className="cast-info">
+                                                <p className="actor-name">{actor.name}</p>
+                                                <p className="character">{actor.character}</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                        
+                        {watchProviders && (watchProviders.flatrate || watchProviders.rent || watchProviders.buy) && (
+                            <div className="watch-providers">
+                                <h4>Where to Watch</h4>
+                                {watchProviders.flatrate && (
+                                    <div className="provider-section">
+                                        <h5>Stream</h5>
+                                        <div className="providers">
+                                            {watchProviders.flatrate.slice(0, 4).map((provider) => (
+                                                <div key={provider.provider_id} className="provider">
+                                                    <img 
+                                                        src={`https://image.tmdb.org/t/p/w92${provider.logo_path}`} 
+                                                        alt={provider.provider_name}
+                                                        title={provider.provider_name}
+                                                    />
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                                {watchProviders.rent && (
+                                    <div className="provider-section">
+                                        <h5>Rent</h5>
+                                        <div className="providers">
+                                            {watchProviders.rent.slice(0, 4).map((provider) => (
+                                                <div key={provider.provider_id} className="provider">
+                                                    <img 
+                                                        src={`https://image.tmdb.org/t/p/w92${provider.logo_path}`} 
+                                                        alt={provider.provider_name}
+                                                        title={provider.provider_name}
+                                                    />
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
                         
                         <div className="trailers">
                             <h4>Trailers</h4>

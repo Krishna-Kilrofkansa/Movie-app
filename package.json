@@ -8,7 +8,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-
+    "start:local": "start-local.bat",
     "vercel-build": "npm run build"
   },
   "dependencies": {
