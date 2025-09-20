@@ -1,0 +1,18 @@
+{
+  "functions": {
+    "api/recommend.py": {
+      "runtime": "python3.9"
+    }
+  },
+  "env": {
+    "GEMINI_API_KEY": "@gemini_api_key",
+    "HUGGINGFACE_API_KEY": "@huggingface_api_key", 
+    "TMDB_API_KEY": "@tmdb_api_key"
+  },
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
+    }
+  ]
+}

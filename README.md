@@ -1,37 +1,36 @@
-# 🎬 Movie-app
+# Movie Recommendation App
 
-A React + Vite powered movie discovery app that fetches data from the **TMDB (The Movie Database) API**.  
-Currently, the app allows users to browse and view details about **trending movies**.  
-Future features will include links to watch the movie and more advanced browsing options.
+A React-based movie recommendation system with AI-powered suggestions.
 
----
+## Features
+- Personality-based movie recommendations
+- TMDB integration for movie details
+- AI-powered suggestions using Gemini/Hugging Face
+- Responsive design with Tailwind CSS
 
-## 🚀 Features
+## Deployment
 
-- 🔥 View **trending movies** in real-time using TMDB API  
-- 📖 Detailed information for each movie (title, description, release date, rating, poster, etc.)  
-- ⚡ Fast development setup using **React + Vite**  
-- ✨ Clean UI with reusable React components  
-- 🛠 Future roadmap:
-  - Links to watch movies  
-  - Search functionality (by title/genre)  -----done
-  - User favorites & watchlist  
-  - Responsive design for mobile devices  --- done  
+### Vercel Deployment
+1. Fork this repository
+2. Connect to Vercel
+3. Add environment variables:
+   - `GEMINI_API_KEY`
+   - `HUGGINGFACE_API_KEY` 
+   - `TMDB_API_KEY`
+4. Deploy automatically via GitHub integration
 
----
+### Local Development
+```bash
+npm install
+npm run dev
+```
 
-## 🛠️ Tech Stack
+## Environment Variables
+Copy `.env.example` to `.env` and add your API keys.
 
-- [React](https://react.dev/) – UI library  
-- [Vite](https://vitejs.dev/) – Build tool for fast development  
-- [TMDB API](https://developer.themoviedb.org/) – Movie database source  
-- [ESLint](https://eslint.org/) – Code quality  
-
----
-
-## ⚙️ Installation & Setup
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/Krishna-Kilrofkansa/Movie-app.git
-   cd Movie-app
+## Tech Stack
+- React + Vite
+- Tailwind CSS
+- Flask (Serverless Functions)
+- Gemini AI / Hugging Face
+- TMDB API

@@ -37,25 +37,20 @@ const PersonalityRecommender = () => {
         setRandomPersonality(null)
         
         try {
-            const prompt = `Based on this personality profile, recommend 5 movies with detailed explanations:
-            Mood: ${formData.mood}
-            Hobby: ${formData.hobby}
-            Genre: ${formData.genre}
-            Vibe: ${formData.vibe}
-            
-            Return a JSON array with objects containing: title, reason, year, director, plot. Focus on why each movie matches their personality.`
-            
-            const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=' + import.meta.env.VITE_GEMINI_API_KEY, {
+            const response = await fetch('http://localhost:5001/personality-recommend', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    contents: [{ parts: [{ text: prompt }] }]
+                    mood: formData.mood,
+                    hobby: formData.hobby,
+                    genre: formData.genre,
+                    vibe: formData.vibe
                 })
             })
             
             const data = await response.json()
-            if (response.ok && data.candidates?.[0]?.content?.parts?.[0]?.text) {
-                const text = data.candidates[0].content.parts[0].text
+            if (response.ok && data.response) {
+                const text = data.response
                 const jsonMatch = text.match(/\[.*\]/s)
                 if (jsonMatch) {
                     const recommendations = JSON.parse(jsonMatch[0])
@@ -64,7 +59,7 @@ const PersonalityRecommender = () => {
                     setError('Unable to parse recommendations')
                 }
             } else {
-                setError('Failed to get recommendations from Gemini')
+                setError(data.error || 'Failed to get recommendations')
             }
         } catch (err) {
             setError('Failed to connect to Gemini API')
@@ -98,17 +93,15 @@ const PersonalityRecommender = () => {
             
             Return a JSON array with objects containing: title, reason, year, director, plot. Focus on why each movie matches this personality.`
             
-            const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=' + import.meta.env.VITE_GEMINI_API_KEY, {
+            const response = await fetch('http://localhost:5001/random-personality-recommend', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    contents: [{ parts: [{ text: prompt }] }]
-                })
+                body: JSON.stringify({ personality })
             })
             
             const data = await response.json()
-            if (response.ok && data.candidates?.[0]?.content?.parts?.[0]?.text) {
-                const text = data.candidates[0].content.parts[0].text
+            if (response.ok && data.response) {
+                const text = data.response
                 const jsonMatch = text.match(/\[.*\]/s)
                 if (jsonMatch) {
                     const recommendations = JSON.parse(jsonMatch[0])
@@ -118,7 +111,7 @@ const PersonalityRecommender = () => {
                     setError('Unable to parse recommendations')
                 }
             } else {
-                setError('Failed to get recommendations from Gemini')
+                setError(data.error || 'Failed to get recommendations')
             }
         } catch (err) {
             setError('Failed to connect to Gemini API')
