@@ -37,7 +37,7 @@ const PersonalityRecommender = () => {
         setRandomPersonality(null)
         
         try {
-            const response = await fetch('http://localhost:5001/personality-recommend', {
+            const response = await fetch('/api/recommend', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -49,15 +49,8 @@ const PersonalityRecommender = () => {
             })
             
             const data = await response.json()
-            if (response.ok && data.response) {
-                const text = data.response
-                const jsonMatch = text.match(/\[.*\]/s)
-                if (jsonMatch) {
-                    const recommendations = JSON.parse(jsonMatch[0])
-                    setRecommendations(recommendations)
-                } else {
-                    setError('Unable to parse recommendations')
-                }
+            if (response.ok && data.recommendations) {
+                setRecommendations(data.recommendations)
             } else {
                 setError(data.error || 'Failed to get recommendations')
             }
@@ -93,23 +86,16 @@ const PersonalityRecommender = () => {
             
             Return a JSON array with objects containing: title, reason, year, director, plot. Focus on why each movie matches this personality.`
             
-            const response = await fetch('http://localhost:5001/random-personality-recommend', {
+            const response = await fetch('/api/recommend', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ personality })
             })
             
             const data = await response.json()
-            if (response.ok && data.response) {
-                const text = data.response
-                const jsonMatch = text.match(/\[.*\]/s)
-                if (jsonMatch) {
-                    const recommendations = JSON.parse(jsonMatch[0])
-                    setRecommendations(recommendations)
-                    setRandomPersonality(personality)
-                } else {
-                    setError('Unable to parse recommendations')
-                }
+            if (response.ok && data.recommendations) {
+                setRecommendations(data.recommendations)
+                setRandomPersonality(personality)
             } else {
                 setError(data.error || 'Failed to get recommendations')
             }
