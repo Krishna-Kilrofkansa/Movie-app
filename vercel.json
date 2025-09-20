@@ -3,5 +3,17 @@
     "api/recommend.py": {
       "runtime": "python3.9"
     }
-  }
+  },
+  "builds": [
+    {
+      "src": "api/recommend.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    }
+  ]
 }
