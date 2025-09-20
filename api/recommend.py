@@ -6,6 +6,14 @@ import os
 
 app = Flask(__name__)
 
+# Enable CORS
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+    return response
+
 def query_gemini_model(prompt):
     api_key = os.environ.get('GEMINI_API_KEY') or os.getenv('GEMINI_API_KEY')
     print(f"Gemini API Key present: {bool(api_key)}, Length: {len(api_key) if api_key else 0}")
@@ -122,11 +130,12 @@ def fetch_tmdb_info(title):
         pass
     return None
 
-def handler(request):
+@app.route('/api/recommend', methods=['POST', 'OPTIONS'])
+def recommend():
+    if request.method == 'OPTIONS':
+        return '', 200
+        
     print(f"Environment variables: GEMINI={bool(os.environ.get('GEMINI_API_KEY'))}, HF={bool(os.environ.get('HUGGINGFACE_API_KEY'))}, TMDB={bool(os.environ.get('TMDB_API_KEY'))}")
-    
-    if request.method != 'POST':
-        return jsonify({"error": "Method not allowed"}), 405
         
     data = request.get_json()
     mood, hobby, genre, vibe = data.get('mood'), data.get('hobby'), data.get('genre'), data.get('vibe')
@@ -174,3 +183,7 @@ Suggest 3 matching movies."""
             recommendations.append({"title": title, "reason": reason, "details": fetch_tmdb_info(title)})
     
     return jsonify({"recommendations": recommendations})
+
+# For Vercel
+if __name__ == '__main__':
+    app.run(debug=True)
