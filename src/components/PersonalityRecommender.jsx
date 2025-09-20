@@ -37,20 +37,37 @@ const PersonalityRecommender = () => {
         setRandomPersonality(null)
         
         try {
-            const response = await fetch('http://localhost:5000/recommend', {
+            const prompt = `Based on this personality profile, recommend 5 movies with detailed explanations:
+            Mood: ${formData.mood}
+            Hobby: ${formData.hobby}
+            Genre: ${formData.genre}
+            Vibe: ${formData.vibe}
+            
+            Return a JSON array with objects containing: title, reason, year, director, plot. Focus on why each movie matches their personality.`
+            
+            const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=' + process.env.REACT_APP_GEMINI_API_KEY, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: prompt }] }]
+                })
             })
             
             const data = await response.json()
-            if (response.ok) {
-                setRecommendations(data.recommendations)
+            if (response.ok && data.candidates?.[0]?.content?.parts?.[0]?.text) {
+                const text = data.candidates[0].content.parts[0].text
+                const jsonMatch = text.match(/\[.*\]/s)
+                if (jsonMatch) {
+                    const recommendations = JSON.parse(jsonMatch[0])
+                    setRecommendations(recommendations)
+                } else {
+                    setError('Unable to parse recommendations')
+                }
             } else {
-                setError(data.error || 'Failed to get recommendations')
+                setError('Failed to get recommendations from Gemini')
             }
         } catch (err) {
-            setError('Failed to connect to recommendation service')
+            setError('Failed to connect to Gemini API')
         } finally {
             setLoading(false)
         }
@@ -61,17 +78,50 @@ const PersonalityRecommender = () => {
         setError('')
         
         try {
-            const response = await fetch('http://localhost:5000/random-recommend')
-            const data = await response.json()
+            const randomMood = moodOptions[Math.floor(Math.random() * moodOptions.length)]
+            const randomHobby = hobbyOptions[Math.floor(Math.random() * hobbyOptions.length)]
+            const randomGenre = ['Comedy', 'Action', 'Drama', 'Sci-Fi', 'Romance', 'Thriller', 'Mystery', 'Fantasy', 'Horror', 'Animation'][Math.floor(Math.random() * 10)]
+            const randomVibe = vibeOptions[Math.floor(Math.random() * vibeOptions.length)]
             
-            if (response.ok) {
-                setRecommendations(data.recommendations)
-                setRandomPersonality(data.personality)
+            const personality = {
+                mood: randomMood,
+                hobby: randomHobby,
+                genre: randomGenre,
+                vibe: randomVibe
+            }
+            
+            const prompt = `Based on this random personality profile, recommend 5 movies with detailed explanations:
+            Mood: ${personality.mood}
+            Hobby: ${personality.hobby}
+            Genre: ${personality.genre}
+            Vibe: ${personality.vibe}
+            
+            Return a JSON array with objects containing: title, reason, year, director, plot. Focus on why each movie matches this personality.`
+            
+            const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=' + process.env.REACT_APP_GEMINI_API_KEY, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: prompt }] }]
+                })
+            })
+            
+            const data = await response.json()
+            if (response.ok && data.candidates?.[0]?.content?.parts?.[0]?.text) {
+                const text = data.candidates[0].content.parts[0].text
+                const jsonMatch = text.match(/\[.*\]/s)
+                if (jsonMatch) {
+                    const recommendations = JSON.parse(jsonMatch[0])
+                    setRecommendations(recommendations)
+                    setRandomPersonality(personality)
+                } else {
+                    setError('Unable to parse recommendations')
+                }
             } else {
-                setError(data.error || 'Failed to get random recommendations')
+                setError('Failed to get recommendations from Gemini')
             }
         } catch (err) {
-            setError('Failed to connect to recommendation service')
+            setError('Failed to connect to Gemini API')
         } finally {
             setLoading(false)
         }
@@ -206,27 +256,20 @@ const PersonalityRecommender = () => {
                     <div className="recommendations-grid">
                         {recommendations.map((rec, index) => (
                             <div key={index} className="recommendation-card">
-                                {rec.details?.poster && (
-                                    <div className="card-poster">
-                                        <img src={rec.details.poster} alt={rec.title} />
-                                    </div>
-                                )}
                                 <div className="card-content">
                                     <h4 className="card-title">{rec.title}</h4>
-                                    {rec.details && (
-                                        <div className="card-meta">
-                                            <span className="year">{rec.details.year}</span>
-                                            {rec.details.director && (
-                                                <span className="director">Dir: {rec.details.director}</span>
-                                            )}
-                                        </div>
-                                    )}
+                                    <div className="card-meta">
+                                        <span className="year">{rec.year}</span>
+                                        {rec.director && (
+                                            <span className="director">Dir: {rec.director}</span>
+                                        )}
+                                    </div>
                                     <p className="card-reason">
                                         <span className="reason-label">Why it's perfect for you:</span>
                                         {rec.reason}
                                     </p>
-                                    {rec.details?.plot && (
-                                        <p className="card-plot">{rec.details.plot}</p>
+                                    {rec.plot && (
+                                        <p className="card-plot">{rec.plot}</p>
                                     )}
                                 </div>
                             </div>

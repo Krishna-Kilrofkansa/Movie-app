@@ -256,15 +256,18 @@ const App = () => {
                             <h1>
                                 Find The <span className="text-gradient">Movies</span> that you'll enjoy without hassle!!
                             </h1>
+                            
+                            {!debounceSearchterm && (
+                                <TopMovies 
+                                    topMovies={topMovies}
+                                    expandedMovie={expandedMovie}
+                                    onExpand={handleMovieExpand}
+                                    onClose={handleMovieClose}
+                                />
+                            )}
+                            
                             <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
                         </header>
-                        
-                        <TopMovies 
-                            topMovies={topMovies}
-                            expandedMovie={expandedMovie}
-                            onExpand={handleMovieExpand}
-                            onClose={handleMovieClose}
-                        />
                         
                         <section className="all-movies">
                             <div className="movies-header">
