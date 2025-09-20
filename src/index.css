@@ -1,17 +1,21 @@
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap");
+@import "./colors.css";
 
 @import "tailwindcss";
 
 @theme {
-    --color-primary: #030014;
+    --color-primary: #37353E;
+    --color-secondary: #44444E;
+    --color-accent: #715A5A;
+    --color-light: #D3DAD9;
 
-    --color-light-100: #cecefb;
-    --color-light-200: #a8b5db;
+    --color-light-100: #D3DAD9;
+    --color-light-200: #715A5A;
 
-    --color-gray-100: #9ca4ab;
+    --color-gray-100: #715A5A;
 
-    --color-dark-100: #0f0d23;
+    --color-dark-100: #44444E;
 
     --font-dm-sans: DM Sans, sans-serif;
 
@@ -24,7 +28,7 @@
     body {
         font-family: "DM Sans", serif;
         font-optical-sizing: auto;
-        background: #030014;
+        background: #37353E;
     }
 
     h1 {
